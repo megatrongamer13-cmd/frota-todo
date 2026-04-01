@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Analista de Frota | Sotreq S11D</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,#1e3a5f 0%,#0f2027 100%);font-family:'Segoe UI',sans-serif;padding:16px;color:#fff}
+  .container{max-width:860px;margin:0 auto}
+  input,select,textarea{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;outline:none;width:100%;margin-bottom:10px;font-family:inherit}
+  input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)}
+  textarea{resize:vertical}
+  select option{background:#1e293b}
+  button{cursor:pointer;font-family:inherit}
+  .btn-primary{background:linear-gradient(90deg,#facc15,#f59e0b);border:none;border-radius:10px;padding:10px 18px;font-weight:700;font-size:14px;color:#1e3a5f}
+  .btn-ghost{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px;color:#fff;font-weight:600;font-size:14px}
+  .btn-icon{border:none;border-radius:8px;width:32px;height:32px;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .header-left{display:flex;align-items:center;gap:10px}
+  .header-title{font-weight:700;font-size:18px}
+  .header-sub{color:#facc15;font-size:11px;font-weight:600}
+  .tabs{display:flex;gap:8px;margin-bottom:20px}
+  .tab{flex:1;padding:10px;border-radius:10px;border:none;font-weight:700;font-size:14px;position:relative;transition:all .2s}
+  .tab.active{background:linear-gradient(90deg,#facc15,#f59e0b);color:#1e3a5f}
+  .tab.inactive{background:rgba(255,255,255,0.08);color:#fff}
+  .badge-alert{position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;border-radius:999px;width:18px;height:18px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+  .summary-card{background:rgba(255,255,255,0.07);border-radius:12px;padding:12px 14px;border-left:4px solid;cursor:pointer;transition:outline .1s}
+  .summary-label{color:#aaa;font-size:11px;margin-bottom:2px}
+  .summary-count{font-weight:700;font-size:24px}
+  .search-input{margin-bottom:14px}
+  .section-divider{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .divider-line{flex:1;height:1px;background:rgba(255,255,255,0.1)}
+  .divider-fav{height:1px;flex:1;background:rgba(250,204,21,0.3)}
+  .card{border-radius:14px;padding:14px 16px;border-left:4px solid;margin-bottom:10px;transition:box-shadow .2s}
+  .card-inner{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .card-body{flex:1}
+  .card-title-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+  .card-title{font-weight:600;font-size:15px}
+  .card-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}
+  .card-desc{color:#cbd5e1;font-size:13px;margin-top:6px}
+  .card-actions{display:flex;gap:6px}
+  .badge{border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700}
+  .badge-status{border:1px solid;font-size:11px;font-weight:600;border-radius:6px;padding:2px 8px;cursor:pointer;background:rgba(255,255,255,0.1)}
+  .badge-fav{background:rgba(250,204,21,0.2);color:#facc15;border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700}
+  .badge-vencida{background:rgba(239,68,68,0.2);color:#ef4444;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700}
+  .badge-hoje{background:rgba(245,158,11,0.2);color:#f59e0b;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700}
+  .badge-dias{color:#9ca3af;font-size:11px}
+  .progress-bar-wrap{background:rgba(255,255,255,0.1);border-radius:999px;height:10px;overflow:hidden;margin-bottom:4px}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:999px;transition:width .5s}
+  .progress-label{color:#9ca3af;font-size:11px;text-align:right;margin-bottom:16px}
+  .subtopicos-header{display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:6px;margin-top:10px}
+  .sub-prog-bar{flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden}
+  .sub-prog-fill{height:100%;background:#22c55e;transition:width .3s}
+  .subtopicos-list{padding-left:8px;border-left:2px solid rgba(147,197,253,0.3);display:flex;flex-direction:column;gap:4px}
+  .sub-item{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 6px;border-radius:6px}
+  .sub-item.feito{background:rgba(34,197,94,0.08)}
+  .sub-item.nfeito{background:rgba(255,255,255,0.04)}
+  .sub-texto.feito{color:#86efac;text-decoration:line-through;opacity:.6}
+  .sub-texto{color:#e2e8f0;font-size:13px}
+  .star-btn{border-radius:8px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:15px}
+  .empty-state{text-align:center;color:#aaa;margin-top:60px}
+  .empty-icon{font-size:48px;margin-bottom:10px}
+  .empty-cta{color:#facc15}
+  .save-indicator{font-size:12px;font-weight:600}
+  /* Modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+  .modal{background:#1e293b;border-radius:18px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+  .modal-title{font-weight:700;font-size:18px;margin-bottom:18px}
+  .modal-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .modal-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+  .field-label{color:#9ca3af;font-size:11px;margin-bottom:4px}
+  .status-btns{display:flex;gap:8px;margin-bottom:12px}
+  .status-btn{flex:1;padding:8px 4px;border-radius:8px;font-weight:600;font-size:12px;border:2px solid;transition:all .2s}
+  .fav-toggle{width:100%;margin-bottom:14px;padding:10px;border-radius:10px;font-weight:600;font-size:14px;border:1.5px solid;transition:all .2s}
+  .modal-footer{display:flex;gap:10px}
+  .sub-input-row{display:flex;gap:8px;margin-bottom:8px}
+  .sub-add-btn{background:rgba(250,204,21,0.2);border:1px solid #facc15;border-radius:10px;padding:0 14px;color:#facc15;font-weight:700;font-size:18px;flex-shrink:0}
+  .sub-form-list{border-left:2px solid rgba(147,197,253,0.3);padding-left:10px;display:flex;flex-direction:column;gap:4px}
+  .sub-form-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border-radius:8px;padding:6px 10px}
+  .sub-form-texto{flex:1;font-size:13px}
+  .sub-remove{background:transparent;border:none;color:#ef4444;font-size:14px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <span style="font-size:30px">🚛</span>
+      <div>
+        <div class="header-title">Analista de Frota</div>
+        <div class="header-sub">SOTREQ · S11D · 794AC</div>
+      </div>
+    </div>
+    <span id="save-indicator" class="save-indicator" style="color:#9ca3af"></span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-todo" onclick="setAba('todo')">📋 Tarefas <span id="alert-todo" class="badge-alert" style="display:none"></span></button>
+    <button class="tab inactive" id="tab-planos" onclick="setAba('planos')">🛡️ Planos Preventivas <span id="alert-planos" class="badge-alert" style="display:none"></span></button>
+  </div>
+
+  <div id="aba-todo">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn-primary" onclick="abrirModalTask()">+ Nova Tarefa</button>
+    </div>
+    <div class="summary-grid">
+      <div class="summary-card" style="border-color:#ef4444" onclick="toggleFiltro('Pendente')" id="card-Pendente">
+        <div class="summary-label">⏳ Pendente</div><div class="summary-count" id="count-Pendente">0</div>
+      </div>
+      <div class="summary-card" style="border-color:#f59e0b" onclick="toggleFiltro('Em andamento')" id="card-Em andamento">
+        <div class="summary-label">⚙️ Em andamento</div><div class="summary-count" id="count-Em andamento">0</div>
+      </div>
+      <div class="summary-card" style="border-color:#22c55e" onclick="toggleFiltro('Concluído')" id="card-Concluído">
+        <div class="summary-label">✅ Concluído</div><div class="summary-count" id="count-Concluído">0</div>
+      </div>
+    </div>
+    <input type="text" class="search-input" placeholder="🔍 Buscar..." id="busca-task" oninput="renderTarefas()"/>
+    <div id="lista-tarefas"></div>
+  </div>
+
+  <div id="aba-planos" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-size:14px"><span style="color:#9ca3af">Progresso: </span><span style="color:#facc15;font-weight:700" id="progresso-label">0/0 planos</span></div>
+      <button class="btn-primary" onclick="abrirModalPlano()">+ Cadastrar Plano</button>
+    </div>
+    <div id="progress-wrap" style="display:none;margin-bottom:16px">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="progress-label" id="progress-pct">0% concluído</div>
+    </div>
+    <div class="summary-grid">
+      <div class="summary-card" style="border-color:#ef4444" onclick="toggleFiltroPlano('Pendente')" id="pcard-Pendente">
+        <div class="summary-label">⏳ Pendente</div><div class="summary-count" id="pcount-Pendente">0</div>
+      </div>
+      <div class="summary-card" style="border-color:#f59e0b" onclick="toggleFiltroPlano('Em andamento')" id="pcard-Em andamento">
+        <div class="summary-label">⚙️ Em andamento</div><div class="summary-count" id="pcount-Em andamento">0</div>
+      </div>
+      <div class="summary-card" style="border-color:#22c55e" onclick="toggleFiltroPlano('Concluído')" id="pcard-Concluído">
+        <div class="summary-label">✅ Concluído</div><div class="summary-count" id="pcount-Concluído">0</div>
+      </div>
+    </div>
+    <input type="text" placeholder="🔍 Buscar por caminhão..." id="busca-plano" oninput="renderPlanos()"/>
+    <div id="lista-planos"></div>
+  </div>
+</div>
+
+<!-- Modal Tarefa -->
+<div class="modal-overlay" id="modal-task" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="modal-task-title">➕ Nova Tarefa</div>
+    <input type="text" id="t-titulo" placeholder="📝 Título"/>
+    <input type="text" id="t-solicitante" placeholder="👤 Solicitante"/>
+    <input type="text" id="t-caminhao" placeholder="🚛 Caminhão"/>
+    <div class="modal-grid-2" style="margin-bottom:10px">
+      <div>
+        <div class="field-label">📅 DATA LIMITE</div>
+        <input type="date" id="t-vencimento" style="margin-bottom:0" oninput="updateAlertaPreview('t-vencimento','t-alerta-preview')"/>
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:2px">
+        <span id="t-alerta-preview" style="font-size:12px"></span>
+      </div>
+    </div>
+    <textarea id="t-descricao" rows="2" placeholder="📄 Descrição / Observações"></textarea>
+    <div class="modal-grid-3">
+      <div><div class="field-label">CATEGORIA</div>
+        <select id="t-categoria">
+          <option>🔧 Manutenção</option><option>🔍 Inspeção</option><option>⛽ Abastecimento</option>
+          <option>🛞 Pneus</option><option>📋 Documentação</option><option>👥 Reunião</option>
+          <option>🛡️ Preventiva</option><option selected>📌 Outro</option>
+        </select>
+      </div>
+      <div><div class="field-label">PRIORIDADE</div>
+        <select id="t-prioridade"><option>Alta</option><option selected>Média</option><option>Baixa</option></select>
+      </div>
+      <div><div class="field-label">STATUS</div>
+        <select id="t-status"><option selected>Pendente</option><option>Em andamento</option><option>Concluído</option></select>
+      </div>
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="field-label" style="margin-bottom:8px">📎 SUBTÓPICOS</div>
+      <div class="sub-input-row">
+        <input type="text" id="novo-sub" placeholder="Ex: CA119 - 00A702491601 - PS48096" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter')addSubForm()"/>
+        <button class="sub-add-btn" onclick="addSubForm()">+</button>
+      </div>
+      <div id="sub-form-list" class="sub-form-list"></div>
+    </div>
+    <button class="fav-toggle" id="t-fav-btn" onclick="toggleFormFav()" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:#9ca3af">☆ Fixar como prioridade</button>
+    <div class="modal-footer">
+      <button class="btn-ghost" style="flex:1" onclick="fecharModalTask()">Cancelar</button>
+      <button class="btn-primary" style="flex:2;border-radius:10px" onclick="salvarTask()">Criar Tarefa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Plano -->
+<div class="modal-overlay" id="modal-plano" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="modal-plano-title">🛡️ Cadastrar Plano</div>
+    <input type="text" id="p-caminhao" placeholder="🚛 Caminhão (ex: CA131)"/>
+    <input type="number" id="p-horimetro" placeholder="⏱️ Horímetro (HR)"/>
+    <input type="text" id="p-folgas" placeholder="🔩 Folgas verificadas"/>
+    <input type="text" id="p-pressoes" placeholder="💨 Pressões verificadas"/>
+    <div class="modal-grid-2" style="margin-bottom:10px">
+      <div><div class="field-label">📅 DATA DO PLANO</div><input type="date" id="p-data" style="margin-bottom:0"/></div>
+      <div>
+        <div class="field-label">🗓️ DATA LIMITE</div>
+        <input type="date" id="p-datamax" style="margin-bottom:0" oninput="updateAlertaPreview('p-datamax','p-alerta-preview')"/>
+      </div>
+    </div>
+    <div id="p-alerta-preview" style="margin-bottom:10px;font-size:12px"></div>
+    <textarea id="p-observacao" rows="3" placeholder="📝 Observações do plano"></textarea>
+    <div style="margin-bottom:12px">
+      <div class="field-label" style="margin-bottom:6px">STATUS</div>
+      <div class="status-btns" id="p-status-btns">
+        <button class="status-btn" onclick="setStatusPlano('Pendente')" id="ps-Pendente" style="border-color:#ef4444;background:rgba(239,68,68,0.13);color:#ef4444">Pendente</button>
+        <button class="status-btn" onclick="setStatusPlano('Em andamento')" id="ps-Em andamento" style="border-color:rgba(255,255,255,0.1);background:transparent;color:#9ca3af">Em andamento</button>
+        <button class="status-btn" onclick="setStatusPlano('Concluído')" id="ps-Concluído" style="border-color:rgba(255,255,255,0.1);background:transparent;color:#9ca3af">Concluído</button>
+      </div>
+    </div>
+    <button class="fav-toggle" id="p-fav-btn" onclick="togglePlanoFormFav()" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:#9ca3af">☆ Fixar como prioridade</button>
+    <div class="modal-footer">
+      <button class="btn-ghost" style="flex:1" onclick="fecharModalPlano()">Cancelar</button>
+      <button class="btn-primary" style="flex:2;border-radius:10px" onclick="salvarPlano()">Cadastrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Estado ──────────────────────────────────────────
+let tarefas = JSON.parse(localStorage.getItem('frota_tarefas') || '[]');
+let planos  = JSON.parse(localStorage.getItem('frota_planos')  || '[]');
+let abaAtual = 'todo';
+let filtroTask = 'Todas';
+let filtroPlano = 'Todos';
+let editTaskId = null;
+let editPlanoId = null;
+let formFav = false;
+let planoFormFav = false;
+let planoStatusForm = 'Pendente';
+let subFormList = [];
+let expandidos = {};
+
+const PRI = { Alta:{color:'#ef4444',bg:'#fef2f2'}, Média:{color:'#f59e0b',bg:'#fffbeb'}, Baixa:{color:'#22c55e',bg:'#f0fdf4'} };
+const SC  = { Concluído:'#22c55e', 'Em andamento':'#f59e0b', Pendente:'#ef4444' };
+
+// ── Storage ──────────────────────────────────────────
+let saveTimer;
+function salvarStorage() {
+  clearTimeout(saveTimer);
+  setSaveIndicator('💾 Salvando...');
+  saveTimer = setTimeout(() => {
+    localStorage.setItem('frota_tarefas', JSON.stringify(tarefas));
+    localStorage.setItem('frota_planos',  JSON.stringify(planos));
+    setSaveIndicator('✅ Dados salvos');
+  }, 400);
+}
+function setSaveIndicator(txt) {
+  const el = document.getElementById('save-indicator');
+  el.textContent = txt;
+  el.style.color = txt.includes('Salvando') ? '#22c55e' : '#9ca3af';
+}
+
+// ── Datas ──────────────────────────────────────────
+function isVencida(d) { return d ? new Date(d+'T23:59:59') < new Date() : false; }
+function isHoje(d) { return d ? new Date(d+'T23:59:59').toDateString() === new Date().toDateString() : false; }
+function diasRestantes(d) { return d ? Math.ceil((new Date(d+'T23:59:59') - new Date()) / 86400000) : null; }
+function alertaHTML(d) {
+  if (!d) return '';
+  const dias = diasRestantes(d);
+  if (dias < 0)  return `<span class="badge-vencida">🚨 VENCIDA</span>`;
+  if (dias === 0) return `<span class="badge-hoje">⚠️ VENCE HOJE</span>`;
+  if (dias <= 2)  return `<span class="badge-hoje">⚠️ ${dias}d restante${dias>1?'s':''}</span>`;
+  return `<span class="badge-dias">📅 ${dias}d restantes</span>`;
+}
+function updateAlertaPreview(inputId, previewId) {
+  document.getElementById(previewId).innerHTML = alertaHTML(document.getElementById(inputId).value);
+}
+
+// ── Abas ──────────────────────────────────────────
+function setAba(a) {
+  abaAtual = a;
+  document.getElementById('aba-todo').style.display   = a==='todo'   ? '' : 'none';
+  document.getElementById('aba-planos').style.display = a==='planos' ? '' : 'none';
+  document.getElementById('tab-todo').className   = 'tab ' + (a==='todo'   ? 'active' : 'inactive');
+  document.getElementById('tab-planos').className = 'tab ' + (a==='planos' ? 'active' : 'inactive');
+  renderTarefas(); renderPlanos();
+}
+
+// ── Sort ──────────────────────────────────────────
+function sortFav(arr) { return [...arr.filter(i=>i.favorito), ...arr.filter(i=>!i.favorito)]; }
+
+// ── Filtros ──────────────────────────────────────────
+function toggleFiltro(s) { filtroTask = filtroTask===s ? 'Todas' : s; renderTarefas(); }
+function toggleFiltroPlano(s) { filtroPlano = filtroPlano===s ? 'Todos' : s; renderPlanos(); }
+
+// ── Render Tarefas ──────────────────────────────────
+function renderTarefas() {
+  const busca = document.getElementById('busca-task').value.toLowerCase();
+  const lista = sortFav(tarefas.filter(t => {
+    const mF = filtroTask==='Todas' || t.status===filtroTask || t.prioridade===filtroTask;
+    const mB = !busca || [t.titulo,t.solicitante,t.caminhao].some(v=>(v||'').toLowerCase().includes(busca));
+    return mF && mB;
+  }));
+
+  ['Pendente','Em andamento','Concluído'].forEach(s => {
+    document.getElementById('count-'+s).textContent = tarefas.filter(t=>t.status===s).length;
+    const c = document.getElementById('card-'+s);
+    c.style.outline = filtroTask===s ? `2px solid ${SC[s]}` : 'none';
+  });
+
+  const alertas = tarefas.filter(t=>t.status!=='Concluído'&&isVencida(t.vencimento)).length;
+  const el = document.getElementById('alert-todo');
+  el.style.display = alertas>0 ? 'flex' : 'none';
+  el.textContent = alertas;
+
+  let html = '';
+  let hasFav = lista.some(t=>t.favorito);
+  if (hasFav) html += `<div class="section-divider"><span style="color:#facc15;font-size:12px;font-weight:700">⭐ FIXADAS</span><div class="divider-fav"></div></div>`;
+
+  lista.forEach((t,idx) => {
+    const p = PRI[t.prioridade] || PRI['Média'];
+    const sc = SC[t.status];
+    const vencida = t.status!=='Concluído' && isVencida(t.vencimento);
+    const showSep = idx>0 && !t.favorito && lista[idx-1]?.favorito;
+    const subFeitos = (t.subtopicos||[]).filter(s=>s.feito).length;
+    const subTotal  = (t.subtopicos||[]).length;
+    const expanded  = expandidos[t.id];
+
+    if (showSep) html += `<div class="section-divider"><div class="divider-line"></div><span style="color:#9ca3af;font-size:11px">OUTRAS</span><div class="divider-line"></div></div>`;
+
+    const borderColor = vencida?'#ef4444':t.favorito?'#facc15':p.color;
+    const bg = vencida?'rgba(239,68,68,0.08)':t.favorito?'rgba(250,204,21,0.06)':t.status==='Concluído'?'rgba(34,197,94,0.07)':'rgba(255,255,255,0.06)';
+    const shadow = vencida?'0 0 12px rgba(239,68,68,0.15)':t.favorito?'0 0 12px rgba(250,204,21,0.1)':'none';
+
+    let subsHTML = '';
+    if (subTotal>0) {
+      const pct = Math.round((subFeitos/subTotal)*100);
+      subsHTML = `<div class="subtopicos-header" onclick="toggleExpand('${t.id}')">
+        <span style="color:#93c5fd;font-size:12px;font-weight:600">📎 Subtópicos (${subFeitos}/${subTotal})</span>
+        <span style="color:#9ca3af;font-size:11px">${expanded?'▲':'▼'}</span>
+        <div class="sub-prog-bar"><div class="sub-prog-fill" style="width:${pct}%"></div></div>
+      </div>`;
+      if (expanded) {
+        subsHTML += `<div class="subtopicos-list">`;
+        (t.subtopicos||[]).forEach(s => {
+          subsHTML += `<div class="sub-item ${s.feito?'feito':'nfeito'}" onclick="toggleSubCard('${t.id}','${s.id}')">
+            <span style="font-size:14px">${s.feito?'✅':'⭕'}</span>
+            <span class="sub-texto ${s.feito?'feito':''}">${s.texto}</span>
+          </div>`;
+        });
+        subsHTML += `</div>`;
+      }
+    }
+
+    const starStyle = t.favorito
+      ? 'background:rgba(250,204,21,0.2);border:1.5px solid #facc15'
+      : 'background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15)';
+
+    html += `<div class="card" style="background:${bg};border-color:${borderColor};box-shadow:${shadow}">
+      <div class="card-inner">
+        <div class="card-body">
+          <div class="card-title-row">
+            <span>${catIcon(t.categoria)}</span>
+            <span class="card-title" style="text-decoration:${t.status==='Concluído'?'line-through':'none'};opacity:${t.status==='Concluído'?0.5:1}">${esc(t.titulo)}</span>
+            ${t.favorito?'<span class="badge-fav">⭐ FIXADA</span>':''}
+            <span class="badge" style="background:${p.bg};color:${p.color}">${t.prioridade}</span>
+            <span class="badge-status" style="color:${sc};border-color:${sc}44" onclick="avancarStatus('${t.id}')">${t.status} →</span>
+            ${alertaHTML(t.vencimento)}
+          </div>
+          <div class="card-meta">
+            ${t.caminhao?`<span style="color:#93c5fd;font-size:12px">🚛 ${esc(t.caminhao)}</span>`:''}
+            ${t.solicitante?`<span style="color:#fde68a;font-size:12px">👤 ${esc(t.solicitante)}</span>`:''}
+            ${t.vencimento?`<span style="color:#f9a8d4;font-size:12px">📅 Limite: ${t.vencimento}</span>`:''}
+          </div>
+          ${t.descricao?`<div class="card-desc">${esc(t.descricao)}</div>`:''}
+          ${subsHTML}
+        </div>
+        <div class="card-actions">
+          <button class="star-btn btn-icon" style="${starStyle}" onclick="toggleFavTask('${t.id}')">${t.favorito?'⭐':'☆'}</button>
+          <button class="btn-icon" style="background:rgba(255,255,255,0.1);border:none" onclick="editarTask('${t.id}')">✏️</button>
+          <button class="btn-icon" style="background:rgba(239,68,68,0.15);border:none" onclick="removerTask('${t.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  if (!lista.length) html = `<div class="empty-state"><div class="empty-icon">📋</div>Nenhuma tarefa.<br><span class="empty-cta">Clique em "+ Nova Tarefa"!</span></div>`;
+  document.getElementById('lista-tarefas').innerHTML = html;
+}
+
+// ── Render Planos ──────────────────────────────────
+function renderPlanos() {
+  const busca = document.getElementById('busca-plano').value.toLowerCase();
+  const lista = sortFav(planos.filter(p => {
+    const mF = filtroPlano==='Todos' || p.status===filtroPlano;
+    const mB = !busca || (p.caminhao||'').toLowerCase().includes(busca);
+    return mF && mB;
+  }));
+
+  const conc = planos.filter(p=>p.status==='Concluído').length;
+  ['Pendente','Em andamento','Concluído'].forEach(s => {
+    document.getElementById('pcount-'+s).textContent = planos.filter(p=>p.status===s).length;
+    document.getElementById('pcard-'+s).style.outline = filtroPlano===s ? `2px solid ${SC[s]}` : 'none';
+  });
+  document.getElementById('progresso-label').textContent = `${conc}/${planos.length} planos`;
+  const pct = planos.length>0 ? Math.round((conc/planos.length)*100) : 0;
+  const pw = document.getElementById('progress-wrap');
+  pw.style.display = planos.length>0 ? '' : 'none';
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = pct+'% concluído';
+
+  const alertas = planos.filter(p=>p.status!=='Concluído'&&isVencida(p.dataMax)).length;
+  const el = document.getElementById('alert-planos');
+  el.style.display = alertas>0 ? 'flex' : 'none';
+  el.textContent = alertas;
+
+  let html = '';
+  const hasFav = lista.some(p=>p.favorito);
+  if (hasFav) html += `<div class="section-divider"><span style="color:#facc15;font-size:12px;font-weight:700">⭐ FIXADOS</span><div class="divider-fav"></div></div>`;
+
+  lista.forEach((p,idx) => {
+    const sc = SC[p.status];
+    const vencida = p.status!=='Concluído' && isVencida(p.dataMax);
+    const showSep = idx>0 && !p.favorito && lista[idx-1]?.favorito;
+    const borderColor = vencida?'#ef4444':p.favorito?'#facc15':sc;
+    const bg = vencida?'rgba(239,68,68,0.08)':p.favorito?'rgba(250,204,21,0.06)':p.status==='Concluído'?'rgba(34,197,94,0.08)':'rgba(255,255,255,0.06)';
+    const shadow = vencida?'0 0 12px rgba(239,68,68,0.15)':p.favorito?'0 0 12px rgba(250,204,21,0.1)':'none';
+    const limiteColor = vencida?'#ef4444':isHoje(p.dataMax)?'#f59e0b':'#fde68a';
+    const starStyle = p.favorito ? 'background:rgba(250,204,21,0.2);border:1.5px solid #facc15' : 'background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15)';
+
+    if (showSep) html += `<div class="section-divider"><div class="divider-line"></div><span style="color:#9ca3af;font-size:11px">OUTROS</span><div class="divider-line"></div></div>`;
+
+    html += `<div class="card" style="background:${bg};border-color:${borderColor};box-shadow:${shadow}">
+      <div class="card-inner">
+        <div class="card-body">
+          <div class="card-title-row">
+            <span style="font-size:18px">🚛</span>
+            <span class="card-title" style="font-size:16px;text-decoration:${p.status==='Concluído'?'line-through':'none'};opacity:${p.status==='Concluído'?0.6:1}">${esc(p.caminhao)}</span>
+            ${p.favorito?'<span class="badge-fav">⭐ FIXADO</span>':''}
+            ${p.horimetro?`<span style="background:rgba(147,197,253,0.15);color:#93c5fd;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600">⏱️ ${p.horimetro} HR</span>`:''}
+            <span class="badge-status" style="color:${sc};border-color:${sc}44" onclick="avancarPlano('${p.id}')">${p.status} →</span>
+            ${alertaHTML(p.dataMax)}
+          </div>
+          <div class="card-meta">
+            ${p.data?`<span style="color:#f9a8d4;font-size:12px">📅 Plano: ${p.data}</span>`:''}
+            ${p.dataMax?`<span style="color:${limiteColor};font-size:12px;font-weight:600">🗓️ Limite: ${p.dataMax}</span>`:''}
+            ${p.folgas?`<span style="color:#86efac;font-size:12px">🔩 Folgas: ${esc(p.folgas)}</span>`:''}
+            ${p.pressoes?`<span style="color:#fde68a;font-size:12px">💨 Pressões: ${esc(p.pressoes)}</span>`:''}
+          </div>
+          ${p.observacao?`<div class="card-desc">📝 ${esc(p.observacao)}</div>`:''}
+        </div>
+        <div class="card-actions">
+          <button class="star-btn btn-icon" style="${starStyle}" onclick="toggleFavPlano('${p.id}')">${p.favorito?'⭐':'☆'}</button>
+          <button class="btn-icon" style="background:rgba(255,255,255,0.1);border:none" onclick="editarPlano('${p.id}')">✏️</button>
+          <button class="btn-icon" style="background:rgba(239,68,68,0.15);border:none" onclick="removerPlano('${p.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  if (!lista.length) html = `<div class="empty-state"><div class="empty-icon">🛡️</div>Nenhum plano.<br><span class="empty-cta">Clique em "+ Cadastrar Plano"!</span></div>`;
+  document.getElementById('lista-planos').innerHTML = html;
+}
+
+// ── Helpers ──────────────────────────────────────────
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function catIcon(c) {
+  const m = {'🔧 Manutenção':'🔧','🔍 Inspeção':'🔍','⛽ Abastecimento':'⛽','🛞 Pneus':'🛞','📋 Documentação':'📋','👥 Reunião':'👥','🛡️ Preventiva':'🛡️','📌 Outro':'📌'};
+  return m[c] || '📌';
+}
+function toggleExpand(id) { expandidos[id] = !expandidos[id]; renderTarefas(); }
+
+// ── Tarefas CRUD ──────────────────────────────────────────
+function abrirModalTask() {
+  editTaskId = null; formFav = false; subFormList = [];
+  document.getElementById('modal-task-title').textContent = '➕ Nova Tarefa';
+  ['titulo','solicitante','caminhao','descricao'].forEach(k=>document.getElementById('t-'+k).value='');
+  document.getElementById('t-vencimento').value='';
+  document.getElementById('t-alerta-preview').innerHTML='';
+  document.getElementById('t-categoria').value='📌 Outro';
+  document.getElementById('t-prioridade').value='Média';
+  document.getElementById('t-status').value='Pendente';
+  updateFavBtn();
+  renderSubFormList();
+  document.querySelector('#modal-task .btn-primary').textContent='Criar Tarefa';
+  document.getElementById('modal-task').style.display='flex';
+}
+function fecharModalTask() { document.getElementById('modal-task').style.display='none'; }
+
+function editarTask(id) {
+  const t = tarefas.find(x=>x.id==id); if(!t) return;
+  editTaskId = id; formFav = t.favorito; subFormList = JSON.parse(JSON.stringify(t.subtopicos||[]));
+  document.getElementById('modal-task-title').textContent='✏️ Editar Tarefa';
+  document.getElementById('t-titulo').value=t.titulo||'';
+  document.getElementById('t-solicitante').value=t.solicitante||'';
+  document.getElementById('t-caminhao').value=t.caminhao||'';
+  document.getElementById('t-vencimento').value=t.vencimento||'';
+  document.getElementById('t-alerta-preview').innerHTML=alertaHTML(t.vencimento);
+  document.getElementById('t-descricao').value=t.descricao||'';
+  document.getElementById('t-categoria').value=t.categoria||'📌 Outro';
+  document.getElementById('t-prioridade').value=t.prioridade||'Média';
+  document.getElementById('t-status').value=t.status||'Pendente';
+  updateFavBtn(); renderSubFormList();
+  document.querySelector('#modal-task .btn-primary').textContent='Salvar';
+  document.getElementById('modal-task').style.display='flex';
+}
+
+function salvarTask() {
+  const titulo = document.getElementById('t-titulo').value.trim();
+  if (!titulo) return;
+  const obj = {
+    id: editTaskId || Date.now(),
+    titulo, solicitante: document.getElementById('t-solicitante').value,
+    caminhao: document.getElementById('t-caminhao').value,
+    vencimento: document.getElementById('t-vencimento').value,
+    descricao: document.getElementById('t-descricao').value,
+    categoria: document.getElementById('t-categoria').value,
+    prioridade: document.getElementById('t-prioridade').value,
+    status: document.getElementById('t-status').value,
+    criado: new Date().toLocaleDateString('pt-BR'),
+    favorito: formFav, subtopicos: subFormList,
+  };
+  if (editTaskId) tarefas = tarefas.map(t=>t.id==editTaskId?obj:t);
+  else tarefas = [obj, ...tarefas];
+  tarefas = sortFav(tarefas);
+  salvarStorage(); fecharModalTask(); renderTarefas();
+}
+
+function removerTask(id) { if(confirm('Remover tarefa?')) { tarefas=tarefas.filter(t=>t.id!=id); salvarStorage(); renderTarefas(); } }
+function avancarStatus(id) {
+  const opts=['Pendente','Em andamento','Concluído'];
+  tarefas=tarefas.map(t=>t.id==id?{...t,status:opts[(opts.indexOf(t.status)+1)%3]}:t);
+  salvarStorage(); renderTarefas();
+}
+function toggleFavTask(id) {
+  tarefas=sortFav(tarefas.map(t=>t.id==id?{...t,favorito:!t.favorito}:t));
+  salvarStorage(); renderTarefas();
+}
+function toggleSubCard(tid,sid) {
+  tarefas=tarefas.map(t=>t.id!=tid?t:{...t,subtopicos:(t.subtopicos||[]).map(s=>s.id==sid?{...s,feito:!s.feito}:s)});
+  salvarStorage(); renderTarefas();
+}
+
+// ── Subtópicos form ──────────────────────────────────────────
+function addSubForm() {
+  const inp=document.getElementById('novo-sub'); const txt=inp.value.trim();
+  if(!txt) return;
+  subFormList.push({id:Date.now(),texto:txt,feito:false}); inp.value=''; renderSubFormList();
+}
+function removeSubForm(id) { subFormList=subFormList.filter(s=>s.id!=id); renderSubFormList(); }
+function toggleSubForm(id) { subFormList=subFormList.map(s=>s.id==id?{...s,feito:!s.feito}:s); renderSubFormList(); }
+function renderSubFormList() {
+  document.getElementById('sub-form-list').innerHTML = subFormList.map(s=>`
+    <div class="sub-form-item">
+      <span onclick="toggleSubForm(${s.id})" style="cursor:pointer;font-size:14px">${s.feito?'✅':'⭕'}</span>
+      <span class="sub-form-texto" style="color:${s.feito?'#86efac':'#e2e8f0'};text-decoration:${s.feito?'line-through':'none'}">${esc(s.texto)}</span>
+      <button class="sub-remove" onclick="removeSubForm(${s.id})">✕</button>
+    </div>`).join('');
+}
+
+// ── Fav form ──────────────────────────────────────────
+function toggleFormFav() { formFav=!formFav; updateFavBtn(); }
+function updateFavBtn() {
+  const btn=document.getElementById('t-fav-btn');
+  btn.style.background=formFav?'rgba(250,204,21,0.15)':'rgba(255,255,255,0.06)';
+  btn.style.borderColor=formFav?'#facc15':'rgba(255,255,255,0.15)';
+  btn.style.color=formFav?'#facc15':'#9ca3af';
+  btn.textContent=formFav?'⭐ Fixada como prioridade':'☆ Fixar como prioridade';
+}
+
+// ── Planos CRUD ──────────────────────────────────────────
+function abrirModalPlano() {
+  editPlanoId=null; planoFormFav=false; planoStatusForm='Pendente';
+  document.getElementById('modal-plano-title').textContent='🛡️ Cadastrar Plano';
+  ['caminhao','horimetro','folgas','pressoes','observacao'].forEach(k=>document.getElementById('p-'+k).value='');
+  document.getElementById('p-data').value=''; document.getElementById('p-datamax').value='';
+  document.getElementById('p-alerta-preview').innerHTML='';
+  setStatusPlano('Pendente'); updatePlanoFavBtn();
+  document.querySelector('#modal-plano .btn-primary').textContent='Cadastrar';
+  document.getElementById('modal-plano').style.display='flex';
+}
+function fecharModalPlano() { document.getElementById('modal-plano').style.display='none'; }
+
+function editarPlano(id) {
+  const p=planos.find(x=>x.id==id); if(!p) return;
+  editPlanoId=id; planoFormFav=p.favorito; planoStatusForm=p.status;
+  document.getElementById('modal-plano-title').textContent='✏️ Editar Plano';
+  document.getElementById('p-caminhao').value=p.caminhao||'';
+  document.getElementById('p-horimetro').value=p.horimetro||'';
+  document.getElementById('p-folgas').value=p.folgas||'';
+  document.getElementById('p-pressoes').value=p.pressoes||'';
+  document.getElementById('p-data').value=p.data||'';
+  document.getElementById('p-datamax').value=p.dataMax||'';
+  document.getElementById('p-alerta-preview').innerHTML=alertaHTML(p.dataMax);
+  document.getElementById('p-observacao').value=p.observacao||'';
+  setStatusPlano(p.status); updatePlanoFavBtn();
+  document.querySelector('#modal-plano .btn-primary').textContent='Salvar';
+  document.getElementById('modal-plano').style.display='flex';
+}
+
+function salvarPlano() {
+  const caminhao=document.getElementById('p-caminhao').value.trim(); if(!caminhao) return;
+  const obj={
+    id:editPlanoId||Date.now(), caminhao,
+    horimetro:document.getElementById('p-horimetro').value,
+    folgas:document.getElementById('p-folgas').value,
+    pressoes:document.getElementById('p-pressoes').value,
+    data:document.getElementById('p-data').value,
+    dataMax:document.getElementById('p-datamax').value,
+    observacao:document.getElementById('p-observacao').value,
+    status:planoStatusForm, favorito:planoFormFav,
+  };
+  if(editPlanoId) planos=planos.map(p=>p.id==editPlanoId?obj:p);
+  else planos=[obj,...planos];
+  planos=sortFav(planos);
+  salvarStorage(); fecharModalPlano(); renderPlanos();
+}
+
+function removerPlano(id) { if(confirm('Remover plano?')) { planos=planos.filter(p=>p.id!=id); salvarStorage(); renderPlanos(); } }
+function avancarPlano(id) {
+  const opts=['Pendente','Em andamento','Concluído'];
+  planos=planos.map(p=>p.id==id?{...p,status:opts[(opts.indexOf(p.status)+1)%3]}:p);
+  salvarStorage(); renderPlanos();
+}
+function toggleFavPlano(id) {
+  planos=sortFav(planos.map(p=>p.id==id?{...p,favorito:!p.favorito}:p));
+  salvarStorage(); renderPlanos();
+}
+
+function setStatusPlano(s) {
+  planoStatusForm=s;
+  ['Pendente','Em andamento','Concluído'].forEach(k=>{
+    const btn=document.getElementById('ps-'+k);
+    const c=SC[k];
+    btn.style.borderColor=k===s?c:'rgba(255,255,255,0.1)';
+    btn.style.background=k===s?c+'22':'transparent';
+    btn.style.color=k===s?c:'#9ca3af';
+  });
+}
+function togglePlanoFormFav() { planoFormFav=!planoFormFav; updatePlanoFavBtn(); }
+function updatePlanoFavBtn() {
+  const btn=document.getElementById('p-fav-btn');
+  btn.style.background=planoFormFav?'rgba(250,204,21,0.15)':'rgba(255,255,255,0.06)';
+  btn.style.borderColor=planoFormFav?'#facc15':'rgba(255,255,255,0.15)';
+  btn.style.color=planoFormFav?'#facc15':'#9ca3af';
+  btn.textContent=planoFormFav?'⭐ Fixado como prioridade':'☆ Fixar como prioridade';
+}
+
+// Fechar modal clicando fora
+document.getElementById('modal-task').addEventListener('click',e=>{ if(e.target===e.currentTarget) fecharModalTask(); });
+document.getElementById('modal-plano').addEventListener('click',e=>{ if(e.target===e.currentTarget) fecharModalPlano(); });
+
+// ── Init ──────────────────────────────────────────
+renderTarefas(); renderPlanos();
+if(tarefas.length||planos.length) setSaveIndicator('✅ Dados salvos');
+</script>
+</body>
+</html>
